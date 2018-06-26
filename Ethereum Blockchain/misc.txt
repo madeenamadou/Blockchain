@@ -1,1 +1,174 @@
+############
 
+#set accounts
+docker exec -it `docker ps -l -q` geth account import /root/.ethereum/privatekey
+docker exec -it `docker ps -l -q` geth account list
+personal.newAccount("")
+eth.getBalance(personal.listAccounts[0])
+eth.accounts.map(function(x) {personal.unlockAccount(x,"")})
+eth.accounts.map(function(x) {return eth.getBalance(x)})
+
+#set etherbase
+miner.setEtherbase(eth.accounts[0])
+"0xc2d7cf95645d33006175b78989035c7c9061d3f9":{"balance": "9999999999999999999999999999999999999999999999999999999"}
+
+
+echo "var testC = `solc --combined-json abi,bin,interface test.sol`" > test.js
+docker exec -it `docker ps -l -q` geth --jspath "/root/.ethereum/" attach /root/.ethereum/geth.ipc
+
+loadScript("/root/.ethereum/test.js")
+
+var testContract = web3.eth.contract(JSON.parse(testC.contracts['test.sol:storeCar'].abi))
+
+eth.accounts.map(function(x) {personal.unlockAccount(x,"")})
+
+miner.start()
+var test = testContract.new({from:eth.accounts[0],data:"0x"+ testC.contracts['test.sol:storeCar'].bin, gas: 3000000}, function(e, contract){
+if(!e) {
+	if(!contract.address) {
+    	console.log("Contrat initialized...\nTransactionHash: " + contract.transactionHash + "\nWaiting to be mined...\n");
+  	} else {
+    	console.log("Contract mined! Address: " + contract.address);
+    	//console.log(contract);
+  	}
+  	} else {
+	console.log(e);
+	}     
+})
+
+web3.eth.defaultAccount = eth.accounts[0]
+
+
+#testing sm
+
+test.addCar("Toyota","Camry")
+test.addCar("Honda","Civic")
+
+
+eth.getTransaction("0xbd5d499e7b36133b3fc0cef4ee3894dc9e8ec895383304b968960ee3da05a3d3").input
+
+
+var filter = web3.eth.filter({
+	fromBlock:0,
+	toBlock:'latest',
+	address: contractAddress,
+	topics: ["0x0947d6ee4c914483108eda279ea09b37152c79c04e4fc0bb0605710978186017"]
+});
+	
+filter.watch(function(error, result) {
+if (!error) console.log("new member");
+});
+
+
+parcel1 = JSON.constructor({"parcelNumber":"0001",
+"locationCoord":{"lat":"45.502617","long":"-73.59269"},
+"usageRestriction":"Residential",
+"streetAddress":"1260 Chemin Remembrance, Montréal, QC H3H 1A2, Canada",
+"forSale":"0",
+"owner" : {"name":"John, Paul","ssid":"999999999"}})
+
+
+web3.eth.sign(JSON.stringify(parcel1), eth.coinbase).then(console.log)
+
+
+web3.eth.sendTransaction({
+    from: eth.accounts[0],
+    to: kdastr.address,
+    value: '1000000000',
+    data: parcel1Hash
+})
+.then(function(receipt){
+    ...
+});
+
+
+newParcel struct
+parcelNumber,
+locationCoord,
+usageRestriction,
+streetAddress,
+forSale,
+currentOwner : { 
+	name,
+	phoneNumber,
+	ssid 
+	}
+	
+	
+{
+	"parcelNumber":"0001",
+	"locationCoord": {
+		"lat":"45.502617",
+		"long":"-73.59269"
+	},
+	"usageRestriction":"Residential",
+	"streetAddress":"1260 Chemin Remembrance, Montréal, QC H3H 1A2, Canada",
+	"forSale":"0",
+	"currentOwner": {
+		"name":"Gov",
+		"phoneNumber":"NA",
+		"ssid":"999999999"
+	}
+}
+
+
+#############
+
+struct Participant {
+        bytes name;
+        bytes phoneNumber;
+        bytes ssin;
+        bool homeOwner;
+    }
+
+// participant is a state variable that records a 'Participant' struct
+// for each possible personal address.
+mapping(address => Participant) public participant;
+
+participant[personal.newAccount("")]
+
+###############
+var mining_threads = 1
+
+function checkWork() {
+	if (eth.getBlock("pending").transactions.length > 0) {
+    	if (eth.mining) return;
+        console.log("== Pending transactions! Mining...");
+        miner.start(mining_threads);
+    } else {
+    	miner.stop();
+        console.log("== No transactions! Mining stopped.");
+    }
+}
+
+console.log("checkWork() is defined");
+eth.filter("latest", function(err, block) { checkWork(); });
+eth.filter("pending", function(err, block) { checkWork(); });
+
+checkWork();
+
+
+function start() {
+	if (eth.getBlock("pending").transactions.length > 0) {
+    	if (eth.mining) return;
+        console.log("Mining new blocks...");
+        miner.start();
+    } else {
+    	miner.stop();
+    }
+}
+
+
+
+############
+
+#tx
+eth.sendTransaction()
+#JSON.parse(web3.toAscii(eth.getTransaction(tash).input))
+
+JSON.constructor({"parcelNumber","locationCoord","usageRestriction","streetAddress"})
+
+#send tx to contracts
+//eth.sendTransaction({from:eth.coinbase, to:test.address, value:100})
+//function getAddress(_hash) {return '0x' +web3.toHex(web3.sha3(shh.getPublicKey(shh.addPrivateKey(_hash)))).slice(26);}
+//web3.shh.getPublicKey()
